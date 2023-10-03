@@ -3,3 +3,12 @@
 set -eu
 
 source "$(dirname "$(realpath "${0}")")"/global-vars.inc.bash
+
+docker \
+    run \
+        --interactive \
+        --tty \
+        --mount type=bind,source="${ROOT_PATH}",target=/app \
+        --workdir /app \
+        steevanb/git-stats:latest \
+        php bin/console.php
