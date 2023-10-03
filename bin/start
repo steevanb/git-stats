@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -eu
+
+source "$(dirname "$(realpath "${0}")")"/global-vars.inc.bash
+
+docker \
+    build \
+        --file "${ROOT_PATH}"/docker/Dockerfile \
+        --tag steevanb/git-stats:latest \
+        "${ROOT_PATH}"
