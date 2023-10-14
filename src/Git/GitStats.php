@@ -6,16 +6,15 @@ namespace Steevanb\GitStats\Git;
 
 use Steevanb\GitStats\{
     Collection\Git\Commit\CommitCollection,
-    Collection\Git\Commit\CommitIdCollection,
     Configuration\Configuration,
     Git\Author\AuthorFactory,
-    Git\Commit\CommitList,
-    Git\Commit\CommitParser
+    Git\Commit\CommitFactory
 };
+use Steevanb\PhpCollection\ScalarCollection\StringCollection;
 
 readonly class GitStats
 {
-    protected CommitIdCollection $commitIds;
+    protected StringCollection $commitIds;
 
     protected CommitCollection $commits;
 
@@ -23,31 +22,20 @@ readonly class GitStats
 
     public function __construct(protected Configuration $configuration)
     {
-        $this->commitIds = (new CommitList())->getIds($configuration->getRepositoryPath());
-
         $this->authorFactory = new AuthorFactory();
-        $this->parseCommits();
-    }
-
-    public function getCommits(): CommitCollection
-    {
-        return $this->commits;
-    }
-
-    public function getAuthorFactory(): AuthorFactory
-    {
-        return $this->authorFactory;
-    }
-
-    protected function parseCommits(): static
-    {
+        $commitFactory = new CommitFactory($this->configuration->getRepositoryPath(), $this->authorFactory);
+        $this->commitIds = $commitFactory->getIds();
         $this->commits = new CommitCollection();
-        $commitParser = new CommitParser($this->configuration->getRepositoryPath(), $this->authorFactory);
+        $this->addCommits($commitFactory);
+        $this->authorFactory->getAll()->setReadOnly();
+    }
+
+    protected function addCommits(CommitFactory $commitFactory): static
+    {
         foreach ($this->commitIds->toArray() as $commitId) {
-            $this->commits->add($commitParser->parse($commitId));
+            $this->commits->add($commitFactory->create($commitId));
         }
         $this->commits->setReadOnly();
-        $this->authorFactory->getAll()->setReadOnly();
 
         return $this;
     }

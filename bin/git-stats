@@ -8,7 +8,8 @@ docker \
     run \
         --interactive \
         --tty \
+        --mount type=bind,source="${ROOT_PATH}",target=/git-stats \
         --mount type=bind,source="${ROOT_PATH}",target=/app \
-        --workdir /app \
+        --workdir /git-stats \
         steevanb/git-stats:latest \
         php bin/console.php
