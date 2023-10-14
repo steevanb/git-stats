@@ -8,4 +8,15 @@ docker \
     build \
         --file "${ROOT_PATH}"/docker/Dockerfile \
         --tag steevanb/git-stats:latest \
+        --pull \
         "${ROOT_PATH}"
+
+docker \
+    run \
+        --rm \
+        --interactive \
+        --tty \
+        --mount type=bind,source="${ROOT_PATH}",target=/app \
+        --user $(id -u):$(id -g) \
+        composer:2.6.5 \
+            update

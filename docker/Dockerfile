@@ -1,5 +1,6 @@
-FROM php:8.2.10-fpm-alpine3.18
+FROM php:8.2.10-cli-bullseye
 
 RUN \
-    apk add git \
+    apt update \
+    && apt install -y git diffstat \
     && git config --global --add safe.directory /app
