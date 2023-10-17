@@ -20,7 +20,7 @@ class GenerateCommand extends Command
 {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $gitStats = new GitStats(new Configuration());
+        $gitStats = new GitStats(new Configuration(), $output);
 
         return static::SUCCESS;
     }
